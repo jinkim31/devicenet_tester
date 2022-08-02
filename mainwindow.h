@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QQueue>
 #include <QByteArray>
+#include <QDateTime>
 #include "packet_translator.h"
 
 using namespace std;
@@ -34,6 +35,7 @@ private:
     QList<QString> requests;
     QList<QString> responses;
     QString currentRequest;
+    QString currentExpectedResponse;
     unsigned int currentIdx;
     QTimer timer;
     QQueue<char> rxQueue;

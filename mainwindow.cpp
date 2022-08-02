@@ -47,7 +47,7 @@ void MainWindow::on_btnStart_clicked()
         return;
     }
 
-    currentIdx = 0;
+    currentIdx = requests.size();
     timer.start(1000.0 / ui->sboxHz->value());
 
 }
@@ -56,37 +56,42 @@ void MainWindow::timerCallback()
 {
     // process response of previous request
     bool received = false;
-    while(!rxQueue.isEmpty())
+
+    if(currentRequest != "")
     {
-        if(translator.push(rxQueue.dequeue()))
+        while(!rxQueue.isEmpty())
         {
-            received = true;
-
-            QString read = translator.getStr();
-
-            if(read == responses[currentIdx])
+            if(translator.push(rxQueue.dequeue()))
             {
-                ui->txtTerminal->append(responses[currentIdx] + " / " +read + '\n');
+                received = true;
+
+                QString read = translator.getStr();
+
+                if(read == currentExpectedResponse)
+                {
+                    ui->txtTerminal->append("(" + QString::number(currentIdx) + ") " + currentRequest + "/ " +read);
+                }
+                else
+                {
+                    ui->txtLog->append(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss") + ": (" + QString::number(currentIdx) + ") " + currentRequest + "/ " +read);
+                }
+                break;
             }
-            else
-            {
-                ui->txtTerminal->append(responses[currentIdx] + " / " +read + '\n');
-            }
-            break;
+        }
+
+        if(!received)
+        {
+            ui->txtLog->append(QDateTime::currentDateTime().toString("yyyy-MM-dd  HH:mm:ss") +": (" + QString::number(currentIdx) + ") " + currentRequest + "/ NO RESPONSE");
         }
     }
 
-    if(!received)
-    {
-        ui->txtTerminal->append(responses[currentIdx] + " / NO RESPONSE" + '\n');
-    }
+    if(++currentIdx >= requests.size()) currentIdx = 0;
 
     currentRequest = requests[currentIdx];
+    currentExpectedResponse = responses[currentIdx];
 
     serial.write(QString(currentRequest + "\r\n").toLocal8Bit());
     serial.flush();
-
-    if(++currentIdx >= requests.size()) currentIdx = 0;
 }
 
 void MainWindow::rxCallback()
