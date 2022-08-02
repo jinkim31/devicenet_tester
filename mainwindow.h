@@ -7,7 +7,7 @@
 #include <QDebug>
 #include <QTimer>
 #include <QQueue>
-#include "packet_translator.h""
+#include "packet_translator.h"
 
 using namespace std;
 
@@ -37,6 +37,7 @@ private:
     QTimer timer;
     QQueue<char> rxQueue;
     PacketTranslator translator;
+
     void timerCallback();
     void rxCallback();
 };
