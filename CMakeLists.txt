@@ -19,6 +19,8 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
+        packet_translator.h
+        packet_translator.cpp
         mainwindow.ui
 )
 

@@ -6,6 +6,8 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QDebug>
 #include <QTimer>
+#include <QQueue>
+#include "packet_translator.h""
 
 using namespace std;
 
@@ -33,7 +35,9 @@ private:
     QString currentRequest;
     unsigned int currentIdx;
     QTimer timer;
-
+    QQueue<char> rxQueue;
+    PacketTranslator translator;
     void timerCallback();
+    void rxCallback();
 };
 #endif // MAINWINDOW_H
