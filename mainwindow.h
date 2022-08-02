@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QTimer>
 #include <QQueue>
+#include <QByteArray>
 #include "packet_translator.h"
 
 using namespace std;

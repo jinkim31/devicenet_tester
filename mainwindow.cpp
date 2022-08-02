@@ -35,7 +35,7 @@ void MainWindow::on_btnStart_clicked()
         return;
     }
 
-    serial.setBaudRate(ui->cboxPort->currentText().toInt());
+    serial.setBaudRate(ui->cboxBaud->currentText().toInt());
     serial.setPort(ports[ui->cboxPort->currentIndex()]);
     if(serial.open(QIODeviceBase::ReadWrite))
     {
@@ -44,10 +44,10 @@ void MainWindow::on_btnStart_clicked()
     else
     {
         ui->txtTerminal->append("Port open failed("+ QString::number(serial.error())+").");
+        return;
     }
 
     currentIdx = 0;
-    currentRequest = "";
     timer.start(1000.0 / ui->sboxHz->value());
 
 }
@@ -55,27 +55,37 @@ void MainWindow::on_btnStart_clicked()
 void MainWindow::timerCallback()
 {
     // process response of previous request
+    bool ok = false;
     while(!rxQueue.isEmpty())
     {
         if(translator.push(rxQueue.dequeue()))
         {
             QString read = translator.getStr();
 
-            if(read == currentRequest) qDebug()<<"ok";
-            else qDebug()<<"error";
+            if(read == responses[currentIdx])
+            {
+                ok = true;
+                ui->txtTerminal->append(responses[currentIdx] + " / " +read);
+                break;
+            }
         }
     }
 
+    if(!ok)
+    {
+
+    }
+
     currentRequest = requests[currentIdx];
-    qDebug()<<currentRequest;
+
+    serial.write(QString(currentRequest + "\r\n").toLocal8Bit());
+    serial.flush();
 
     if(++currentIdx >= requests.size()) currentIdx = 0;
 }
 
 void MainWindow::rxCallback()
 {
-    qDebug()<<"rx";
-
     auto byteArray = serial.readAll();
     for(int i=0; i<byteArray.size(); i++) rxQueue.append(byteArray[i]);
 }
