@@ -55,25 +55,30 @@ void MainWindow::on_btnStart_clicked()
 void MainWindow::timerCallback()
 {
     // process response of previous request
-    bool ok = false;
+    bool received = false;
     while(!rxQueue.isEmpty())
     {
         if(translator.push(rxQueue.dequeue()))
         {
+            received = true;
+
             QString read = translator.getStr();
 
             if(read == responses[currentIdx])
             {
-                ok = true;
-                ui->txtTerminal->append(responses[currentIdx] + " / " +read);
-                break;
+                ui->txtTerminal->append(responses[currentIdx] + " / " +read + '\n');
             }
+            else
+            {
+                ui->txtTerminal->append(responses[currentIdx] + " / " +read + '\n');
+            }
+            break;
         }
     }
 
-    if(!ok)
+    if(!received)
     {
-
+        ui->txtTerminal->append(responses[currentIdx] + " / NO RESPONSE" + '\n');
     }
 
     currentRequest = requests[currentIdx];
