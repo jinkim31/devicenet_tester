@@ -78,13 +78,22 @@ void MainWindow::timerCallback()
     currentRequest = requests[currentIdx];
     currentExpectedResponse = responses[currentIdx];
 
-    serial.write(QString(currentRequest + "\r\n").toLocal8Bit());
-    serial.flush();
+    if(ui->cboxComm->currentText() == "Serial")
+    {
+        serial.write(QString(currentRequest + "\r\n").toLocal8Bit());
+        serial.flush();
+    }
+    else if(ui->cboxComm->currentText() == "TCP")
+    {
+        qDebug()<<"socket write";
+        socket.write(QString(currentRequest + "\r\n").toLocal8Bit());
+        socket.flush();
+    }
 }
 
 void MainWindow::rxCallback(QIODevice* device)
 {
-    auto byteArray = serial.readAll();
+    auto byteArray = device->readAll();
     for(int i=0; i<byteArray.size(); i++) rxQueue.append(byteArray[i]);
 }
 
