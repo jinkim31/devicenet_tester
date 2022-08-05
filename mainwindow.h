@@ -9,7 +9,12 @@
 #include <QQueue>
 #include <QByteArray>
 #include <QDateTime>
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QIODevice>
 #include "packet_translator.h"
+#include "serial_option.h"
+#include "tcp_option.h"
 
 using namespace std;
 
@@ -28,6 +33,8 @@ public:
 private slots:
     void on_btnStart_clicked();
 
+    void on_cboxComm_currentTextChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     QList<QSerialPortInfo> ports;
@@ -40,8 +47,15 @@ private:
     QTimer timer;
     QQueue<char> rxQueue;
     PacketTranslator translator;
+    SerialOption serialOption;
+    TCPOption tcpOption;
+    QTcpSocket socket;
 
+    bool isTestRunning;
     void timerCallback();
-    void rxCallback();
+    void rxCallback(QIODevice* device);
+    bool start();
+    bool stop();
+    void setOption(QString commType);
 };
 #endif // MAINWINDOW_H

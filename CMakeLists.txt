@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-find_package(Qt6 REQUIRED COMPONENTS SerialPort)
+find_package(Qt6 REQUIRED COMPONENTS SerialPort  WebSockets)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -22,6 +22,8 @@ set(PROJECT_SOURCES
         packet_translator.h
         packet_translator.cpp
         mainwindow.ui
+        serial_option.h serial_option.cpp
+        tcp_option.h tcp_option.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -49,7 +51,8 @@ endif()
 
 target_link_libraries(serial_tester PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
-    Qt6::SerialPort)
+    Qt6::SerialPort
+    Qt6::WebSockets)
 
 set_target_properties(serial_tester PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
