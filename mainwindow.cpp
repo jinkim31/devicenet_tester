@@ -78,7 +78,7 @@ void MainWindow::timerCallback()
     currentRequest = requests[currentIdx];
     currentExpectedResponse = responses[currentIdx];
 
-    ui->txtTerminal->append("tx: "+currentRequest);
+    ui->txtTerminal->append(QDateTime::currentDateTime().toString("yyyy-MM-dd  HH:mm:ss") +" tx: "+currentRequest);
 
     if(ui->cboxComm->currentText() == "Serial")
     {
@@ -103,7 +103,7 @@ void MainWindow::rxCallback(QIODevice* device)
         str+=byteArray[i];
     }
 
-    ui->txtTerminal->append("rx: "+str);
+    ui->txtTerminal->append(QDateTime::currentDateTime().toString("yyyy-MM-dd  HH:mm:ss") +" rx: "+str);
 }
 
 bool MainWindow::start()
