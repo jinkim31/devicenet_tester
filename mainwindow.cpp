@@ -40,6 +40,16 @@ void MainWindow::on_btnStart_clicked()
 
 }
 
+QString byteArrayStr(const QString str)
+{
+    QString res = "[";
+    for(int i=0; i<str.length(); i++)
+    {
+        res += QString::number(str[i].unicode()) +" ";
+    }
+
+    return res + "]";
+}
 void MainWindow::timerCallback()
 {
     // process response of previous request
@@ -61,7 +71,7 @@ void MainWindow::timerCallback()
                 }
                 else
                 {
-                    ui->txtLog->append(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss") + ": (" + QString::number(currentIdx) + ") " + currentRequest + " / " +read);
+                    ui->txtLog->append(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss") + ": (" + QString::number(currentIdx) + ") " + currentRequest + " " + byteArrayStr(currentRequest) + " / " +read+ " " + byteArrayStr(read));
                 }
                 break;
             }
@@ -69,7 +79,7 @@ void MainWindow::timerCallback()
 
         if(!received)
         {
-            ui->txtLog->append(QDateTime::currentDateTime().toString("yyyy-MM-dd  HH:mm:ss") +": (" + QString::number(currentIdx) + ") " + currentRequest + " / NO RESPONSE");
+            ui->txtLog->append(QDateTime::currentDateTime().toString("yyyy-MM-dd  HH:mm:ss") +": (" + QString::number(currentIdx) + ") " + currentRequest + " " + byteArrayStr(currentRequest) + " / NO RESPONSE");
         }
     }
 
