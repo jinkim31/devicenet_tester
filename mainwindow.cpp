@@ -54,6 +54,7 @@ void MainWindow::timerCallback()
 {
     // process response of previous request
     bool received = false;
+    QString read;
 
     if(currentRequest != "")
     {
@@ -62,18 +63,7 @@ void MainWindow::timerCallback()
             if(translator.push(rxQueue.dequeue()))
             {
                 received = true;
-
-                QString read = translator.getStr();
-
-                if(read == currentExpectedResponse)
-                {
-                    //ui->txtTerminal->append("(" + QString::number(currentIdx) + ") " + currentRequest + " / " +read);
-                }
-                else
-                {
-                    ui->txtLog->append(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss") + ": (" + QString::number(currentIdx) + ") " + currentRequest + " " + byteArrayStr(currentRequest) + " / " +read+ " " + byteArrayStr(read));
-                }
-                break;
+                read = translator.getStr();
             }
         }
 
@@ -81,6 +71,18 @@ void MainWindow::timerCallback()
         {
             ui->txtLog->append(QDateTime::currentDateTime().toString("yyyy-MM-dd  HH:mm:ss") +": (" + QString::number(currentIdx) + ") " + currentRequest + " " + byteArrayStr(currentRequest) + " / NO RESPONSE");
         }
+        else
+        {
+            if(read == currentExpectedResponse)
+            {
+                //ui->txtTerminal->append("(" + QString::number(currentIdx) + ") " + currentRequest + " / " +read);
+            }
+            else
+            {
+                ui->txtLog->append(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss") + ": (" + QString::number(currentIdx) + ") " + currentRequest + " " + byteArrayStr(currentRequest) + " / " +read+ " " + byteArrayStr(read));
+            }
+        }
+
     }
 
     if(++currentIdx >= requests.size()) currentIdx = 0;
