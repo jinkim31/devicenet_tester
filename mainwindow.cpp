@@ -57,7 +57,7 @@ void MainWindow::timerCallback()
 
                 if(read == currentExpectedResponse)
                 {
-                    ui->txtTerminal->append("(" + QString::number(currentIdx) + ") " + currentRequest + " / " +read);
+                    //ui->txtTerminal->append("(" + QString::number(currentIdx) + ") " + currentRequest + " / " +read);
                 }
                 else
                 {
@@ -78,6 +78,8 @@ void MainWindow::timerCallback()
     currentRequest = requests[currentIdx];
     currentExpectedResponse = responses[currentIdx];
 
+    ui->txtTerminal->append("tx: "+currentRequest);
+
     if(ui->cboxComm->currentText() == "Serial")
     {
         serial.write(QString(currentRequest + "\r\n").toLocal8Bit());
@@ -94,7 +96,14 @@ void MainWindow::timerCallback()
 void MainWindow::rxCallback(QIODevice* device)
 {
     auto byteArray = device->readAll();
-    for(int i=0; i<byteArray.size(); i++) rxQueue.append(byteArray[i]);
+    QString str;
+    for(int i=0; i<byteArray.size(); i++)
+    {
+        rxQueue.append(byteArray[i]);
+        str+=byteArray[i];
+    }
+
+    ui->txtTerminal->append("rx: "+str);
 }
 
 bool MainWindow::start()
