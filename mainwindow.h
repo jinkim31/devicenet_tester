@@ -35,6 +35,10 @@ private slots:
 
     void on_cboxComm_currentTextChanged(const QString &arg1);
 
+    void on_btnTerminalClear_clicked();
+
+    void on_btnLogClear_clicked();
+
 private:
     Ui::MainWindow *ui;
     QList<QSerialPortInfo> ports;

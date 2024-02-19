@@ -1,5 +1,26 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include <QFile>
+
+QString load(const QString& fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return "";
+
+    QTextStream in(&file);
+    return in.readAll();
+}
+
+void save(const QString& fileName, const QString& text)
+{
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+
+    QTextStream out(&file);
+    out << text;
+}
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -18,14 +39,18 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->vboxCommOption->addWidget(&serialOption);
     ui->vboxCommOption->addWidget(&tcpOption);
 
+    ui->txtRequest->setText(load("request.txt"));
+    ui->txtResponse->setText(load("response.txt"));
+
     this->setOption("Serial");
 }
 
 MainWindow::~MainWindow()
 {
+    save("request.txt", ui->txtRequest->toPlainText());
+    save("response.txt", ui->txtResponse->toPlainText());
     delete ui;
 }
-
 
 void MainWindow::on_btnStart_clicked()
 {
@@ -73,7 +98,12 @@ void MainWindow::timerCallback()
         }
         else
         {
-            if(read == currentExpectedResponse)
+            // check match
+            QRegularExpression re(currentExpectedResponse);
+            //read.chop(1);
+            //qDebug()<<currentExpectedResponse<<"("<<currentExpectedResponse.size()<<") "<<read<<"("<<read.size()<<")";
+            QRegularExpressionMatch match = re.match(read);
+            if(match.hasMatch())
             {
                 //ui->txtTerminal->append("(" + QString::number(currentIdx) + ") " + currentRequest + " / " +read);
             }
@@ -166,6 +196,8 @@ bool MainWindow::start()
     timer.start(1000.0 / ui->sboxHz->value());
 
     ui->btnStart->setText("Stop");
+    ui->txtRequest->setDisabled(true);
+    ui->txtResponse->setDisabled(true);
     return true;
 }
 
@@ -184,6 +216,8 @@ bool MainWindow::stop()
 
 
     ui->btnStart->setText("Start");
+    ui->txtRequest->setDisabled(false);
+    ui->txtResponse->setDisabled(false);
     return true;
 }
 
@@ -199,5 +233,17 @@ void MainWindow::setOption(QString commType)
 void MainWindow::on_cboxComm_currentTextChanged(const QString& str)
 {
     setOption(str);
+}
+
+
+void MainWindow::on_btnTerminalClear_clicked()
+{
+    ui->txtTerminal->clear();
+}
+
+
+void MainWindow::on_btnLogClear_clicked()
+{
+    ui->txtLog->clear();
 }
 

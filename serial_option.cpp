@@ -26,7 +26,7 @@ SerialOption::SerialOption()
     cboxBaud.addItem("115200");
     cboxBaud.addItem("500000");
     cboxBaud.addItem("1000000");
-    cboxBaud.setCurrentIndex(3);
+    cboxBaud.setCurrentIndex(7);
 
     connect(&btnRefresh, &QPushButton::clicked, [&]{refreshPorts();});
 
